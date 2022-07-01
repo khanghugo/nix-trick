@@ -1,4 +1,4 @@
-// then install spleeter imperatively with `pip install spleeter`
+# then install spleeter imperatively with `pip install spleeter`
 
 let
   pkgs = import <nixpkgs> {};
