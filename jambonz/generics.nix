@@ -5,6 +5,7 @@ stdenv.mkDerivation {
     buildInputs = [
         nodejs
         nodePackages.npm
+        nodePackages.pm2
         yarn
         docker
         docker-compose
