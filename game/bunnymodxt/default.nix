@@ -37,6 +37,10 @@ pkgs.stdenv.mkDerivation rec {
 		ninja
 	];
 
+	permittedInsecurePackages = [
+		"libgcrypt_1_5"
+  	];
+
 	installPhase = ''
 		mkdir $out
 		cp * $out
