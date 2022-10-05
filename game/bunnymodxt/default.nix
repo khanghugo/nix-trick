@@ -3,27 +3,44 @@
 
 let
 	pkgs = import <nixpkgs> {
-    	system = "i686-linux";
+    		system = "i686-linux";
   	};
 
-	src = pkgs.fetchgit {
-		url = "https://github.com/YaLTeR/BunnymodXT.git";
-		rev = "bf13720ca48808b752badb0f7a06f34dea5e726f";
-		sha256 = "ltaO3DJZbTF5k6gIi5oKAKW0+Swdc1e9tmn3gphNLFc=";
-		fetchSubmodules = true;
-	};
+  	unstable = import <nixos-unstable> {
+  		# system = "i686-linux";
+  	};
+
+  	unstable_i686 = import <nixos-unstable> {
+  		system = "i686-linux";
+  	};
+
+  	really_old = import (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/refs/tags/19.09.tar.gz") {
+  		system = "i686-linux";
+  	};
+
+	# src = pkgs.fetchgit {
+	# 	url = "https://github.com/YaLTeR/BunnymodXT.git";
+	# 	rev = "bf13720ca48808b752badb0f7a06f34dea5e726f";
+	# 	sha256 = "ltaO3DJZbTF5k6gIi5oKAKW0+Swdc1e9tmn3gphNLFc=";
+	# 	fetchSubmodules = true;
+	# };
 in
 with pkgs;
 
-pkgs.stdenv.mkDerivation rec {
-	inherit src;
+pkgs.mkShell rec {
+	# inherit src;
 
 	# game is 32bit
 	system = "i686-linux";
 	name = "BunnymodXT";
 
+	permittedInsecurePackages = [
+		# "libgcrypt-1.5.6"
+		# "libgcrypt_1_5"
+  	];
+
+
 	nativeBuildInputs = [
-		gcc
 		boost
 		libcxx
 	];
@@ -31,22 +48,16 @@ pkgs.stdenv.mkDerivation rec {
 	buildInputs = [
 		gnumake
 		cmake
-		rustc
-		cargo
+		unstable_i686.rustc
+		unstable_i686.cargo
+		# unstable.rustup # ONLY rustup and vscode in a different environment for IDE features
 		libGL
 		ninja
+		libgcrypt_1_5
+		SDL2
+		pkg-config
+		gcc
+		ocl-icd
+		x264
 	];
-
-	permittedInsecurePackages = [
-		"libgcrypt_1_5"
-  	];
-
-	installPhase = ''
-		mkdir $out
-		cp * $out
-	'';
-	
-	# for now, it doesnot work on its own so nix-shell then install is the best
-  # and rust stuff so just install rust or link cargo folder into this instead
-	CARGO_HOME = "~/.cargo";
 }
